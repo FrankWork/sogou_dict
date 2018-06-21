@@ -1,11 +1,16 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-
+from __future__ import print_function
+# from __future__ import unicode_literals
 import struct
 import sys
 import binascii 
 import pdb
+import argparse
+import codecs
+import os
+
 #搜狗的scel词库就是保存的文本的unicode编码，每两个字节一个字符（中文汉字或者英文字母）
 #找出其每部分的偏移位置即可
 #主要两部分
@@ -143,40 +148,51 @@ def getChinese(data):
 
 
 def deal(file_name):
-    print '-'*60	#打印60个字符'-'
+    # print('-'*60)	#打印60个字符'-'
     f = open(file_name,'rb')
     data = f.read()
     f.close()
     
     
     if data[0:12] !="\x40\x15\x00\x00\x44\x43\x53\x01\x01\x00\x00\x00":
-        print "确认你选择的是搜狗(.scel)词库?"
-        sys.exit(0)
+        print(u"确认你选择的是搜狗(.scel)词库?")
+        print(file_name)
+        return
+        # sys.exit(0)
     #pdb.set_trace()
     
-    print "词库名：" ,byte2str(data[0x130:0x338])#.encode('GB18030')
-    print "词库类型：" ,byte2str(data[0x338:0x540])#.encode('GB18030')
-    print "描述信息：" ,byte2str(data[0x540:0xd40])#.encode('GB18030')
-    print "词库示例：",byte2str(data[0xd40:startPy])#.encode('GB18030')
+    # print(u"词库名：" ,byte2str(data[0x130:0x338]).strip())#.encode('GB18030')
+    # print(u"词库类型：" ,byte2str(data[0x338:0x540]).strip())#.encode('GB18030')
+    # print(u"描述信息：" ,byte2str(data[0x540:0xd40]).strip())#.encode('GB18030')
+    # # print(u"词库示例：",byte2str(data[0xd40:startPy]))#.encode('GB18030')
     
     getPyTable(data[startPy:startChinese])
     getChinese(data[startChinese:])
         
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--scel_dir', default="", help='', required=True)
+    parser.add_argument('--txt_file', default="", help='', required=True)
+    args = parser.parse_args()
+
     #将要转换的词库添加在这里就可以了
-    o = ['1.scel',
-    '2.scel',
-    ]
-    
-    for f in o:
-        deal(f)
+    for dir_ in os.listdir( args.scel_dir ):
+        print(dir_)
+        path = os.path.join(args.scel_dir, dir_)
+        for f in os.listdir(path):
+            f = os.path.join(path, f)
+            try:
+                deal(f)
+            except:
+                print(f)
+        sys.stdout.flush()
         
     #保存结果  
-    f = open('sougou.txt','w')
+    f = open(args.txt_file,'w')
     for count,py,word in GTable:
         #GTable保存着结果，是一个列表，每个元素是一个元组(词频,拼音,中文词组)，有需要的话可以保存成自己需要个格式
         #我没排序，所以结果是按照上面输入文件的顺序
-        f.write( unicode('{%(count)s}' %{'count':count}+py+' '+ word).encode('GB18030') )#最终保存文件的编码，可以自给改
+        f.write( unicode('%d\t%s\t%s' % (count, py, word)).encode('utf-8') )#最终保存文件的编码，可以自给改
         f.write('\n')
-    f.close()    
+    f.close()

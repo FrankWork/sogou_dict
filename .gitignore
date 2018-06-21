@@ -4,3 +4,6 @@ data/
 *.exe
 *.tar.gz
 *.csv
+dict/
+sogou.txt
+sogou.zip
