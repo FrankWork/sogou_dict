@@ -187,6 +187,13 @@ if __name__ == '__main__':
             except:
                 print(f)
         sys.stdout.flush()
+    # for file in os.listdir( args.scel_dir ):
+    #     f = os.path.join(args.scel_dir, file)
+    #     try:
+    #         deal(f)
+    #     except:
+    #         print(f)    
+    #     sys.stdout.flush()
         
     #保存结果  
     f = open(args.txt_file,'w')

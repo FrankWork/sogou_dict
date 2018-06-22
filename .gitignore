@@ -1,9 +1,10 @@
 scel/
 data/
 *.log
-*.exe
+tmp.*
 *.tar.gz
 *.csv
 dict/
 sogou.txt
+dict.zip
 sogou.zip
