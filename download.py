@@ -102,3 +102,4 @@ if __name__ == "__main__":
             url = v['url']+"/default/" + str(page)
             print(url)
             init_content(url, v['type'])
+    print('done!')
