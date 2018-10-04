@@ -8,7 +8,7 @@ https://pinyin.sogou.com/dict/
 
 ```bash
 pip install user_agent
-pip install request
+pip install requests
 pip install pyquery
 
 python download.py
